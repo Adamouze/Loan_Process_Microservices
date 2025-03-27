@@ -1,0 +1,100 @@
+# .env file loaded for environment variables
+env_file:
+  - .env
+
+services:
+
+  db:
+    image: postgres:latest
+    container_name: loan_db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:${DB_PORT}" # Exposed only for development
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    depends_on:
+      - db
+    restart: always
+    ports:
+      - "${ADMINER_PORT}:${ADMINER_PORT}"
+    
+
+  customer_service:
+    build: ./customer_service
+    container_name: customer_service
+    depends_on:
+      - db
+      - risk_service
+      - check_service
+      - loan_provider_service
+      - notification_service
+    ports:
+      - "${CUSTOMER_PORT}:${CUSTOMER_PORT}" # Exposed for client communication
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - CUSTOMER_PORT=${CUSTOMER_PORT}
+
+  risk_service:
+    build: ./risk_service
+    container_name: risk_service
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - RISK_GRPC_PORT=${RISK_GRPC_PORT}
+    # No port exposed — internal communication only
+
+  check_service:
+    build: ./check_service
+    container_name: check_service
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - CHECK_PORT=${CHECK_PORT}
+
+    # No port exposed — internal communication only
+
+  loan_provider_service:
+    build: ./loan_provider_service
+    container_name: loan_provider_service
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - LOAN_PROVIDER_PORT=${LOAN_PROVIDER_PORT}
+    # No port exposed — internal communication only
+
+  notification_service:
+    build: ./notification_service
+    container_name: notification_service
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - NOTIFICATION_PORT=${NOTIFICATION_PORT}
+    ports:
+      - "${NOTIFICATION_PORT}:${NOTIFICATION_PORT}" # Exposed for client communication
+
+volumes:
+  db_data:
