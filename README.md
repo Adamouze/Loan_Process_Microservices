@@ -34,33 +34,33 @@ This project aims to:
 
 Each major functionality from the scenario is assigned to a dedicated service:
 
-### 1. **Customer Service (REST)**
+### 1. **Customer Service (REST)** ADAM
 - Handles customer loan requests (ID, personal info, loan type, amount, description).
 - Validates the maximum allowed loan amount.
 - Coordinates the loan process by calling other services.
 - **Reason for REST:** Public-facing service with standard HTTP operations and high accessibility.
 
-### 2. **Risk Evaluation Service (gRPC)**
+### 2. **Risk Evaluation Service (gRPC)** ADAM
 - Analyzes the customer’s financial profile and returns a risk level.
 - Simulates interaction with a partner system.
 - **Reason for gRPC:** Fast, efficient, internal communication ideal for service-to-service RPC.
 
-### 3. **Check Validation Service (GraphQL)**
+### 3. **Check Validation Service (GraphQL)** LOUIS
 - Validates the cashier's check submitted by the customer.
 - Simulates interaction with an external banking service.
 - **Reason for GraphQL:** Offers flexible querying for validation results with nested data structures.
 
-### 4. **Loan Provider Service (SOAP)**
+### 4. **Loan Provider Service (SOAP)** ADAM
 - Requests the loan amount from the financial firm’s provider.
 - Simulates fund transfer to the customer’s account.
 - **Reason for SOAP:**  This service simulates a legacy external system (e.g., a traditional bank API) that exposes only a SOAP interface, which is common in older financial infrastructures.
 
-### 5. **Notification Service (REST)**
+### 5. **Notification Service (REST)** LOUIS
 - Notifies the customer about loan approval or rejection.
 - Can be internal or expose a small API.
 - **Reason for REST:** Simple, loosely coupled notification trigger with potential future externalization.
 
-### 6. **PostgreSQL Database**
+### 6. **PostgreSQL Database** LOUIS
 - Stores customer profiles, loan requests, and decision history.
 - **Reason:** Reliable relational model to track structured and linked financial data.
 
