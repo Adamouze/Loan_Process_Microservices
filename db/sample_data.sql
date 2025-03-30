@@ -12,11 +12,11 @@ INSERT INTO bank (id, name, cashier_check_validity_pattern) VALUES
 (2, 'Credit Maritime', 'CM[0-9]{5}');
 
 -- Insert accounts
--- Note: The 3rd account references a non-existent bank (bank_id=999)
 INSERT INTO account (id, customer_id, bank_id, account_number, balance) VALUES
 (1, 1, 1, 'BNK000123456', 12500.00),
 (2, 2, 2, 'CM00054321', 9800.75),
-(3, 3, 999, 'FAKE99999999', 450.50);  -- Banque inexistante
+(3, 3, 1, 'BNK000987654', 1500.00),
+(4, 3, 2, 'CM00065432', 2500.00);
 
 -- Insert banking transactions (only for accounts 1 and 2)
 INSERT INTO banking_transaction (account_id, transaction_type, amount) VALUES
@@ -25,11 +25,15 @@ INSERT INTO banking_transaction (account_id, transaction_type, amount) VALUES
 (1, 'deposit', 500.00),
 (2, 'deposit', 2000.00),
 (2, 'withdrawal', 300.25),
-(2, 'withdrawal', 250.00);
-
--- Insert a loan application for Alice (customer_id=1)
-INSERT INTO loan_application (customer_id, account_id, loan_type, loan_amount, loan_description, status) VALUES
-(1, 1, 'personal', 15000.00, 'Refinancement de crédit auto', 'pending');
+(2, 'withdrawal', 250.00),
+(3, 'deposit', 1500.00),
+(3, 'withdrawal', 100.00),
+(3, 'deposit', 200.00),
+(4, 'withdrawal', 500.00),
+(4, 'deposit', 1000.00),
+(4, 'withdrawal', 300.00),
+(4, 'deposit', 500.00),
+(4, 'withdrawal', 200.00);
 
 -- Insert a cashier's check for Bruno (customer_id=2, account_id=2)
 INSERT INTO cashier_check (account_id, bank_id, check_number, issue_date, amount, is_valid) VALUES
