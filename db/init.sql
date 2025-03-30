@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS account (
   account_number VARCHAR(20) UNIQUE NOT NULL,
   balance DECIMAL(15, 2) NOT NULL DEFAULT 0,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS cashier_check (
   amount  DECIMAL(15, 3) NOT NULL,
   is_valid BOOLEAN NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 -- Loan monitoring table
 CREATE TABLE IF NOT EXISTS loan_monitoring (
@@ -68,5 +68,5 @@ CREATE TABLE IF NOT EXISTS loan_monitoring (
   check_validation_status VARCHAR(20),
   loan_provider_status VARCHAR(20),
   notification_status VARCHAR(20),
-  customer_status VARCHAR(20),
+  customer_status VARCHAR(20)
 );

@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.loan_application import Loan_ApplicationCreate
-from customer_service.app.orm.orm import LoanApplication as Loan_ApplicationORM, Customer as CustomerORM, Account as AccountORM, LoanMonitoring as LoanMonitoringORM
-from error_handling.error_types import NotFoundError, DBError, LoanAmountTooHighError
+from app.orm.orm import LoanApplication as Loan_ApplicationORM, Customer as CustomerORM, Account as AccountORM, LoanMonitoring as LoanMonitoringORM
+from app.error_handling.error_types import NotFoundError, DBError, LoanAmountTooHighError
 
 MAX_LOAN_AMOUNT = 1000000  # Maximum loan amount allowed
 

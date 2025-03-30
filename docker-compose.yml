@@ -1,7 +1,3 @@
-# .env file loaded for environment variables
-env_file:
-  - .env
-
 services:
 
   db:
@@ -34,10 +30,10 @@ services:
     container_name: customer_service
     depends_on:
       - db
-      - risk_service
-      - check_service
-      - loan_provider_service
-      - notification_service
+      # - risk_service
+      # - check_service
+      # - loan_provider_service
+      # - notification_service
     ports:
       - "${CUSTOMER_PORT}:${CUSTOMER_PORT}" # Exposed for client communication
     environment:

@@ -1,34 +1,34 @@
 from app.orm.orm import CashierCheck as CashierCheckORM
 from app.models.cashier_check import CashierCheckCreate
 from sqlalchemy.orm import Session
-from error_handling.error_types import NotFoundError, DBError
+from app.error_handling.error_types import NotFoundError, DBError
 import requests
 import os
 
-GRAPHQL_ENDPOINT = os.getenv("GRAPHQL_ENDPOINT")
+GRAPHQL_ENDPOINT = os.getenv("GRAPHQL_ENDPOINT",0)
 
 # TODO : Implement the GraphQL mutation to create and verify a cashier check
-def submit_cashier_check(cashier_check: CashierCheckCreate):
-    query = """
-    mutation CreateAndVerifyCashierCheck($input: CashierCheckInput!) {
-        createAndVerifyCashierCheck(input: $input) {
-            check_number
-            is_valid
-            message
-        }
-    }
-    """
-    variables = {
-        "input": {
-            "account_number": cashier_check.account_number,
-            "bank_name": cashier_check.bank_name,
-            "check_number": cashier_check.check_number,
-            "issue_date": cashier_check.issue_date,
-            "amount": cashier_check.amount
-        }
-    }
-    response = requests.post(GRAPHQL_ENDPOINT, json={"query": query, "variables": variables})
-    return response.json()
+# def submit_cashier_check(cashier_check: CashierCheckCreate):
+#     query = """
+#     mutation CreateAndVerifyCashierCheck($input: CashierCheckInput!) {
+#         createAndVerifyCashierCheck(input: $input) {
+#             check_number
+#             is_valid
+#             message
+#         }
+#     }
+#     """
+#     variables = {
+#         "input": {
+#             "account_number": cashier_check.account_number,
+#             "bank_name": cashier_check.bank_name,
+#             "check_number": cashier_check.check_number,
+#             "issue_date": cashier_check.issue_date,
+#             "amount": cashier_check.amount
+#         }
+#     }
+#     response = requests.post(GRAPHQL_ENDPOINT, json={"query": query, "variables": variables})
+#     return response.json()
 
 # def create_cashier_check(CashierCheck : CashierCheckCreate, db: Session):
 #     try:
