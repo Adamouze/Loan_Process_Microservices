@@ -60,7 +60,7 @@ Each major functionality from the scenario is assigned to a dedicated service:
 - Can be internal or expose a small API.
 - **Reason for REST:** Simple, loosely coupled notification trigger with potential future externalization.
 
-### 6. **PostgreSQL Database** LOUIS
+### 6. **PostgreSQL Database** ADAM
 - Stores customer profiles, loan requests, and decision history.
 - **Reason:** Reliable relational model to track structured and linked financial data.
 
@@ -110,6 +110,8 @@ Loan_Process_Microservices/
 │   │   ├── main.py
 │   │   ├── routes/
 │   │   ├── services/
+│   │   ├── error_handling/
+│   │   ├── orm/
 │   │   └── models/
 │   ├── requirements.txt
 │   └── Dockerfile
@@ -144,7 +146,8 @@ Loan_Process_Microservices/
 │   └── Dockerfile
 
 ├── db/
-│   └── init.sql               # Initial schema
+│   ├── init.sql               # Initial schema
+│   └── sample_data.sql        # Sample data for demonstration
 
 ├── camunda/ # BPMN engine (Camunda Platform 8) 
 │   ├── docker-compose.yml # Separate for orchestration stack 
@@ -152,6 +155,22 @@ Loan_Process_Microservices/
 │       ├── loan_process.bpmn # BPMN diagram to deploy
 
 ```
+---
+
+## Workflow (Microservices orchestration)
+
+The following diagram illustrates the end-to-end workflow of the loan application process, showcasing the interactions between the microservices and decision points.
+
+![Workflow Loan Application Process](Workflow_Loan_Application_Process.svg)
+
+---
+
+### SQL Schema UML Diagram
+
+To better understand the database structure and relationships, an **UML diagram** will be created for the SQL schema. This diagram will visually represent the tables, their attributes, and the relationships between them (e.g., primary keys, foreign keys).
+
+![SQL Schema UML Diagram](SQL_Relational_UML.svg)
+
 ---
 
 Stay tuned for more updates as the implementation progresses.
