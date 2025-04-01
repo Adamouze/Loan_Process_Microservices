@@ -9,7 +9,7 @@ from ..services.loan_application_services import (
     get_loan_applications_by_account_number,
     get_loan_application_with_monitoring
 )
-from ..models.loan_application import (
+from ..models.loan_application_and_monitoring import (
     Loan_ApplicationCreate, 
     Loan_ApplicationResponse,
     Loan_Application_with_MonitoringResponse

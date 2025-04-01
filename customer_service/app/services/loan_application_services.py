@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from app.models.loan_application import Loan_ApplicationCreate
+from app.models.loan_application_and_monitoring import Loan_ApplicationCreate
 from app.orm.orm import LoanApplication as Loan_ApplicationORM, Customer as CustomerORM, Account as AccountORM, LoanMonitoring as LoanMonitoringORM
 from app.error_handling.error_types import NotFoundError, DBError, LoanAmountTooHighError
 
@@ -10,11 +10,11 @@ def create_loan_application(loan_application: Loan_ApplicationCreate, db: Sessio
     if loan_application.loan_amount > MAX_LOAN_AMOUNT:
         raise LoanAmountTooHighError("Loan amount exceeds the maximum limit")
     
-    customer = db.query(CustomerORM).filter(CustomerORM.id == loan_application.customer_id).first()
+    customer = db.query(CustomerORM).filter(CustomerORM.full_name == loan_application.full_name).first()
     if not customer:
         raise NotFoundError("Customer not found")
     
-    account = db.query(AccountORM).filter(AccountORM.id == loan_application.account_number).first()
+    account = db.query(AccountORM).filter(AccountORM.account_number == loan_application.account_number).first()
     if not account:
         raise NotFoundError("Account not found")
     
@@ -24,8 +24,7 @@ def create_loan_application(loan_application: Loan_ApplicationCreate, db: Sessio
         loan_type=loan_application.loan_type,
         loan_amount=loan_application.loan_amount,
         loan_description=loan_application.loan_description,
-        status="pending",
-        email=loan_application.email
+        status="pending"
     )
     
     db.add(db_loan_application)
@@ -61,8 +60,8 @@ def create_loan_application_with_monitoring(loan_application: Loan_ApplicationCr
     loan_monitoring_record = create_loan_monitoring(loan_application_record.id, db)
     
     return {
-        "loan_application": loan_application_record,
-        "loan_monitoring": loan_monitoring_record
+        "Loan_Application": loan_application_record,
+        "Loan_Monitoring": loan_monitoring_record
     }
 
 # Get a loan application by ID
@@ -78,10 +77,13 @@ def get_loan_application_by_id(loan_application_id: int, db: Session):
 # Get loan applications by account number  
 def get_loan_applications_by_account_number(account_number: str, db: Session):
     try:
-        loan_application = db.query(Loan_ApplicationORM).join(Loan_ApplicationORM.account).filter(Loan_ApplicationORM.account.account_number == account_number).all()
-        if not loan_application:
+        account = db.query(AccountORM).filter(AccountORM.account_number == account_number).first()
+        if not account:
+            raise NotFoundError("No account found with that account number")
+        loan_applications = db.query(Loan_ApplicationORM).filter(Loan_ApplicationORM.account_id == account.id).all()
+        if not loan_applications:
             raise NotFoundError("No loan_applications found with that account number")
-        return loan_application
+        return loan_applications
     except Exception as e:
         raise DBError("Internal DB Server Error") from e
 
@@ -92,8 +94,8 @@ def get_loan_application_with_monitoring(loan_application_id: int, db: Session):
         raise NotFoundError("No loan_application found with that id")
     
     return {
-        "loan_application": loan_application,
-        "loan_monitoring": loan_application.loan_monitoring
+        "Loan_Application": loan_application,
+        "Loan_Monitoring": loan_application.loan_monitoring
     }
 
 

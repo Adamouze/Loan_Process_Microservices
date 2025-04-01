@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, Text, DateTime, ForeignKey, Boolean, DECIMAL
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, DECIMAL
 from sqlalchemy.orm import relationship
 from ..db.database import Base
+from datetime import datetime
+
 
 # Customer table
 class Customer(Base):
@@ -33,8 +35,9 @@ class Account(Base):
     bank_id = Column(Integer, ForeignKey("bank.id", ondelete="CASCADE"), nullable=False)
     account_number = Column(String(20), unique=True, nullable=False)
     balance = Column(DECIMAL(15, 2), nullable=False, default=0)
-    created_at = Column(DateTime, nullable=True)
-    updated_at = Column(DateTime, nullable=False)
+    from datetime import datetime
+    created_at = Column(DateTime, nullable=True, default=datetime.now)
+    updated_at = Column(DateTime, nullable=True, default=datetime.now)
 
     # Relationships
     loan_applications = relationship("LoanApplication", backref="account", cascade="all, delete-orphan")
@@ -49,7 +52,7 @@ class BankingTransaction(Base):
     account_id = Column(Integer, ForeignKey("account.id", ondelete="CASCADE"), nullable=False)
     transaction_type = Column(String(20), nullable=False)
     amount = Column(DECIMAL(15, 2), nullable=False)
-    transaction_date = Column(DateTime, nullable=False)
+    transaction_date = Column(DateTime, nullable=True, default=datetime.now)
 
 # Loan application table
 class LoanApplication(Base):
@@ -62,7 +65,7 @@ class LoanApplication(Base):
     loan_amount = Column(DECIMAL(15, 2), nullable=False)
     loan_description = Column(Text)
     status = Column(String(20), nullable=False)
-    created_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=True, default=datetime.now)
 
     # 1:1 Relationships
     loan_monitoring = relationship("LoanMonitoring", uselist=False, cascade="all, delete-orphan")
@@ -78,7 +81,7 @@ class CashierCheck(Base):
     issue_date = Column(DateTime, nullable=False)
     amount = Column(DECIMAL(15, 3), nullable=False)
     is_valid = Column(Boolean, nullable=False)
-    created_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, nullable=True, default=datetime.now)
 
 # Loan monitoring table
 class LoanMonitoring(Base):
@@ -86,7 +89,7 @@ class LoanMonitoring(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     loan_application_id = Column(Integer, ForeignKey("loan_application.id", ondelete="CASCADE"), nullable=False, unique=True)  # UNIQUE
-    monitoring_date = Column(DateTime, nullable=True)
+    monitoring_date = Column(DateTime, nullable=True, default=datetime.now)
     risk_status = Column(String(20))
     check_validation_status = Column(String(20))
     loan_provider_status = Column(String(20))
