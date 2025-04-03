@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data # Persist Data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialize the database with a script
       - ./db/sample_data.sql:/docker-entrypoint-initdb.d/sample_data.sql # Add sample data script in the same way
     ports:
@@ -31,7 +31,7 @@ services:
     depends_on:
       - db
       # - risk_service
-      # - check_service
+      # - check_validation_service
       # - loan_provider_service
       # - notification_service
     ports:
@@ -57,8 +57,8 @@ services:
     # No port exposed — internal communication only
 
   check_service:
-    build: ./check_service
-    container_name: check_service
+    build: ./check_validation_service
+    container_name: check_validation_service
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}

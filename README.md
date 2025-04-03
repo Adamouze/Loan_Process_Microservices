@@ -124,7 +124,7 @@ Loan_Process_Microservices/
 │   ├── requirements.txt
 │   └── Dockerfile
 
-├── check_service/             # GraphQL - Strawberry
+├── check_validation_service/             # GraphQL - Strawberry
 │   ├── app/
 │   │   ├── main.py
 │   │   └── schema/
