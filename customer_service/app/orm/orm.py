@@ -35,7 +35,6 @@ class Account(Base):
     bank_id = Column(Integer, ForeignKey("bank.id", ondelete="CASCADE"), nullable=False)
     account_number = Column(String(20), unique=True, nullable=False)
     balance = Column(DECIMAL(15, 2), nullable=False, default=0)
-    from datetime import datetime
     created_at = Column(DateTime, nullable=True, default=datetime.now)
     updated_at = Column(DateTime, nullable=True, default=datetime.now)
 
