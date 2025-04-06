@@ -194,7 +194,7 @@ To run the project, follow these steps:
 
 All microservice port are defined in the `.env` file, and you can modify them as needed. The Camunda BPMN ports are explained in the official documentation highlighted above.
 
-Make sure Docker and Docker Compose V2 is installed and running on your system before executing the script.
+**Make sure Docker and Docker Compose V2 are installed and running on your system before executing the script.**
 
 ---
 
