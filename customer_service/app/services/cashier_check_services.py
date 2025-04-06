@@ -1,11 +1,52 @@
-from app.orm.orm import CashierCheck as CashierCheckORM
-from app.models.cashier_check import CashierCheckCreate
+from app.orm.orm import CashierCheck as CashierCheckORM, Account as AccountORM, Bank as BankORM
+from app.models.cashier_check import CashierCheckCreate, CashierCheckGenerate, CashierCheckGenerateResponse
 from sqlalchemy.orm import Session
-from app.error_handling.error_types import NotFoundError, DBError
+from app.error_handling.error_types import NotFoundError
 import requests
+import random
+import re
 import os
+from datetime import datetime, timedelta
 
-GRAPHQL_ENDPOINT = os.getenv("GRAPHQL_ENDPOINT",0)
+GRAPHQL_ENDPOINT = os.getenv("GRAPHQL_ENDPOINT", 0)
+
+# generate a cashier check
+def generate_cashier_check(cashier_check: CashierCheckGenerate, db: Session):
+    # Check if the account exists
+    account = db.query(AccountORM).filter(AccountORM.account_number == cashier_check.account_number).first()
+    if not account:
+        raise NotFoundError("Account not found")
+    
+    # Check if the bank exists
+    bank = db.query(BankORM).filter(BankORM.id == account.bank_id).first()
+    if not bank:
+        raise NotFoundError("Bank not found")
+    
+    # Generate a unique account number based on the bank's account number validity pattern
+    pattern = bank.cashier_check_validity_pattern
+    while True:
+        # Replace placeholders in the pattern with random digits
+        generated_check_number = re.sub(r'\[0-9\]\{(\d+)\}', 
+                        lambda x: ''.join(random.choices('0123456789', k=int(x.group(1)))), 
+                        pattern)
+        # Check if the generated account number is unique
+        existing_check_number = db.query(CashierCheckORM).filter(CashierCheckORM.check_number == generated_check_number).first()
+        if not existing_check_number:
+            break
+
+    # Generate a date that is today's date + 1 month
+    generated_check_date = datetime.now() + timedelta(days=30)
+    
+    # Generate a cashier check
+    generated_check = CashierCheckGenerateResponse(
+        account_number=cashier_check.account_number,
+        check_number=generated_check_number,
+        issue_date=generated_check_date,
+        amount=cashier_check.amount
+    )
+    
+    return generated_check
+    
 
 # TODO : Implement the GraphQL mutation to create and verify a cashier check
 # def submit_cashier_check(cashier_check: CashierCheckCreate):
@@ -31,17 +72,17 @@ GRAPHQL_ENDPOINT = os.getenv("GRAPHQL_ENDPOINT",0)
 #     return response.json()
 
 # def create_cashier_check(CashierCheck : CashierCheckCreate, db: Session):
-#     try:
+#
 #         # Check if the account exists
 #         account = db.query(AccountORM).filter(AccountORM.account_number == CashierCheck.account_number).first()
 #         if not account:
 #             raise NotFoundError("Account not found")
-        
+
 #         # Check if the bank exists
 #         bank = db.query(BankORM).filter(BankORM.name == CashierCheck.bank_name).first()
 #         if not bank:
 #             raise NotFoundError("Bank not found")
-        
+
 #         cashier_check = CashierCheckORM(
 #             account_number=CashierCheck.account_number,
 #             bank_name=CashierCheck.bank_name,
@@ -51,21 +92,42 @@ GRAPHQL_ENDPOINT = os.getenv("GRAPHQL_ENDPOINT",0)
 #             is_valid=False, # Assuming default is invalid
 #             created_at=datetime.now()
 #         )
-        
+
 #         db.add(cashier_check)
 #         db.commit()
 #         db.refresh(cashier_check)
 
 #         return cashier_check
-    
-#     except Exception as e:
-#         raise DBError("Internal DB Server Error") from e
 
+
+# Get cashier check by check number
 def get_cashier_check(check_number: str, db: Session):
-    try:
-        cashier_check = db.query(CashierCheckORM).filter(CashierCheckORM.check_number == check_number).first()
-        if not cashier_check:
-            raise NotFoundError("Cashier check not found")
-        return cashier_check
-    except Exception as e:
-        raise DBError("Internal DB Server Error") from e
+    cashier_check = db.query(CashierCheckORM).filter(CashierCheckORM.check_number == check_number).first()
+    if not cashier_check:
+        raise NotFoundError("Cashier check not found")
+    return cashier_check
+    
+# Get all cashier checks for an account
+def get_cashier_checks_by_account_number(account_number: str, db: Session):
+    # Check if the account exists
+    account = db.query(AccountORM).filter(AccountORM.account_number == account_number).first()
+    if not account:
+        raise NotFoundError("Account not found")
+    
+    # Get cashier checks for the account
+    cashier_checks = db.query(CashierCheckORM).filter(CashierCheckORM.account_id == account.id).all()
+    if not cashier_checks:
+        raise NotFoundError("No cashier checks found for this account number")
+    
+    return cashier_checks
+
+# Delete a cashier check
+def delete_cashier_check(check_number: str, db: Session):
+    cashier_check = db.query(CashierCheckORM).filter(CashierCheckORM.check_number == check_number).first()
+    if not cashier_check:
+        raise NotFoundError("Cashier check not found")
+    
+    db.delete(cashier_check)
+    db.commit()
+    
+    return {"message": "Cashier check deleted successfully"}

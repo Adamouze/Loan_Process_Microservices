@@ -30,9 +30,9 @@ services:
     container_name: customer_service
     depends_on:
       - db
-      # - risk_service
+      - risk_service
       # - check_service
-      # - loan_provider_service
+      - loan_provider_service
       # - notification_service
     ports:
       - "${CUSTOMER_PORT}:${CUSTOMER_PORT}" # Exposed for client communication
@@ -43,6 +43,10 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - CUSTOMER_PORT=${CUSTOMER_PORT}
+      - RISK_GRPC_PORT=${RISK_GRPC_PORT}
+      - CHECK_PORT=${CHECK_PORT}
+      - LOAN_PROVIDER_PORT=${LOAN_PROVIDER_PORT}
+      - NOTIFICATION_PORT=${NOTIFICATION_PORT}
 
   risk_service:
     build: ./risk_service

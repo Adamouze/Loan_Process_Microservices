@@ -9,7 +9,6 @@ class LoanType(str, Enum):
 
 # Loan application and monitoring models
 class Loan_ApplicationBase(BaseModel):
-    full_name: str
     account_number: str  # `account_number` corresponds to `account_id` in the table, we will use it to get the account_id
     loan_type: LoanType
     loan_amount: Decimal = Field(..., max_digits=15, decimal_places=2)
@@ -32,7 +31,6 @@ class LoanMonitoringCreate(LoanMonitoringBase):
 # Loan application and monitoring response models
 class Loan_ApplicationResponse(BaseModel):    
     id: int
-    customer_id: int
     account_id: int
     loan_type: LoanType
     loan_amount: Decimal = Field(..., max_digits=15, decimal_places=2)
@@ -41,17 +39,17 @@ class Loan_ApplicationResponse(BaseModel):
     created_at: datetime
     
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class LoanMonitoringResponse(LoanMonitoringCreate):
     id: int
     monitoring_date: datetime
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 # Loan application and monitoring response model with nested structure
 class Loan_Application_with_MonitoringResponse(BaseModel):
     Loan_Application : Loan_ApplicationResponse
     Loan_Monitoring : LoanMonitoringResponse
     class Config:
-        orm_mode = True
+        from_attributes = True

@@ -1,22 +1,29 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime
+from decimal import Decimal
 
-class CashierCheckBase(BaseModel):
+class CashierCheckGenerate(BaseModel):
     account_number: str # `account_number` corresponds to `account_id` in the table
-    bank_name: str  # `bank_name` corresponds to `bank_id` in the table
+    amount: Decimal = Field(..., max_digits=15, decimal_places=2)
+
+class CashierCheckGenerateResponse(CashierCheckGenerate):
     check_number: str
     issue_date: datetime
-    amount: float
+
+class CashierCheckBase(CashierCheckGenerateResponse):
+    pass
 
 class CashierCheckCreate(CashierCheckBase):
     pass
 
-class CashierCheckResponse(CashierCheckBase):
+class CashierCheckResponse(BaseModel):
     id: int
     account_id: int
-    bank_id: int
+    check_number: str
+    amount: Decimal = Field(..., max_digits=15, decimal_places=2)
+    issue_date: datetime
     is_valid: bool
     created_at: datetime
     class Config:
-        orm_mode = True
+        from_attributes = True

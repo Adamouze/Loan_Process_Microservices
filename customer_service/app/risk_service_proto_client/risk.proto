@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package risk;
+
+service RiskService {
+  rpc AnalyzeRisk (RiskRequest) returns (RiskResponse);
+}
+
+message RiskRequest {
+  int32 account_id = 1;
+  double loan_amount = 2;
+}
+
+message RiskResponse {
+  string loan_status = 1;       // accepted / rejected
+  string risk_status = 2;       // low / high
+  string reason = 3;
+}

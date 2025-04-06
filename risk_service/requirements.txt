@@ -1,5 +1,4 @@
-spyne
-lxml 
-zeep
+grpcio
+grpcio-tools
 sqlalchemy
 psycopg2-binary
