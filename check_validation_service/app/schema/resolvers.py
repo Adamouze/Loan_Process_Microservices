@@ -1,15 +1,19 @@
-from app.services.notifier import send_sms_notification
 from app.schema.types import CheckInput
+from app.services.notifier import send_sms_notification
+import strawberry
 
 @strawberry.type
 class Mutation:
     @strawberry.mutation
     def validate_check(self, check: CheckInput) -> bool:
-        # simulate invalid check if amount > 10000
-        if check.amount > 10000:
-            send_sms_notification(
-                phone_number=check.phone_number,
-                message="Votre chèque a été refusé. Veuillez contacter votre banque."
+        # Validation logic (exemple : refus si montant > 1M)
+        is_valid = check.amount <= 1000000
+        
+        if not is_valid:
+            message = (
+                f"Bonjour {check.full_name}, "
+                "votre chèque a été refusé. Veuillez contacter votre banque."
             )
-            return False
-        return True
+            send_sms_notification(check.phone_number, message)
+        
+        return is_valid

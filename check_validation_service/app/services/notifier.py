@@ -1,8 +1,6 @@
-# check_validation_service/app/services/notifier.py
-
 import requests
 
-NOTIFICATION_SERVICE_URL = "http://notification_service:8004/notify"  # nom Docker + port
+NOTIFICATION_SERVICE_URL = "http://notification_service:8004/notify"  # Docker name + port
 
 def send_sms_notification(phone_number: str, message: str):
     try:
