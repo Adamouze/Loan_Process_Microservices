@@ -1,5 +1,3 @@
-import strawberry
-
 @strawberry.input
 class CheckInput:
     full_name: str
