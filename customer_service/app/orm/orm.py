@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, DECIMAL
+from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, DECIMAL, UniqueConstraint
 from sqlalchemy.orm import relationship
 from ..db.database import Base
 from datetime import datetime
@@ -9,7 +9,7 @@ class Customer(Base):
     __tablename__ = "customer"
 
     id = Column(Integer, primary_key=True, index=True)
-    full_name = Column(String(100), nullable=False)
+    full_name = Column(String(100), unique=True, nullable=False)
     email = Column(String(100), unique=True, nullable=False)
 
     # Relationships
@@ -21,6 +21,7 @@ class Bank(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), unique=True, nullable=False)
+    account_number_validity_pattern = Column(String(100), unique=True, nullable=False)
     cashier_check_validity_pattern = Column(String(100), unique=True, nullable=False)
 
     # Relationships
@@ -58,7 +59,6 @@ class LoanApplication(Base):
     __tablename__ = "loan_application"
 
     id = Column(Integer, primary_key=True, index=True)
-    customer_id = Column(Integer, ForeignKey("customer.id", ondelete="CASCADE"), nullable=False)
     account_id = Column(Integer, ForeignKey("account.id", ondelete="CASCADE"), nullable=False)
     loan_type = Column(String(20), nullable=False)
     loan_amount = Column(DECIMAL(15, 2), nullable=False)
@@ -75,12 +75,16 @@ class CashierCheck(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     account_id = Column(Integer, ForeignKey("account.id", ondelete="CASCADE"), nullable=False)
-    bank_id = Column(Integer, ForeignKey("bank.id", ondelete="CASCADE"), nullable=False)
     check_number = Column(String(50), nullable=False)
     issue_date = Column(DateTime, nullable=False)
     amount = Column(DECIMAL(15, 3), nullable=False)
     is_valid = Column(Boolean, nullable=False)
     created_at = Column(DateTime, nullable=True, default=datetime.now)
+
+    # Ensure unique constraint on account_id and check_number
+    __table_args__ = (
+        UniqueConstraint('account_id', 'check_number', name='uq_account_check_number'),
+    )
 
 # Loan monitoring table
 class LoanMonitoring(Base):
@@ -89,8 +93,8 @@ class LoanMonitoring(Base):
     id = Column(Integer, primary_key=True, index=True)
     loan_application_id = Column(Integer, ForeignKey("loan_application.id", ondelete="CASCADE"), nullable=False, unique=True)  # UNIQUE
     monitoring_date = Column(DateTime, nullable=True, default=datetime.now)
-    risk_status = Column(String(20))
-    check_validation_status = Column(String(20))
-    loan_provider_status = Column(String(20))
-    notification_status = Column(String(20))
-    customer_status = Column(String(20))
+    risk_status = Column(String(100))
+    check_validation_status = Column(String(100))
+    loan_provider_status = Column(String(100))
+    notification_status = Column(String(100))
+    customer_status = Column(String(100))

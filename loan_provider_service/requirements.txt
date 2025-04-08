@@ -1,1 +1,5 @@
-spyne lxml zeep
+spyne
+lxml 
+zeep
+sqlalchemy
+psycopg2-binary

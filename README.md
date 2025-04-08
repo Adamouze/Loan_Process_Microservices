@@ -165,11 +165,36 @@ The following diagram illustrates the end-to-end workflow of the loan applicatio
 
 ---
 
-### SQL Schema UML Diagram
+## SQL Schema UML Diagram
 
 To better understand the database structure and relationships, an **UML diagram** will be created for the SQL schema. This diagram will visually represent the tables, their attributes, and the relationships between them (e.g., primary keys, foreign keys).
 
 ![SQL Schema UML Diagram](SQL_Relational_UML.svg)
+
+---
+
+## How to run the project
+To run the project, follow these steps:
+
+1. Execute the `run.sh` script located at the root of the project:
+    ```bash
+    ./run.sh
+    ```
+    This script will start both the Docker Compose stack for the microservices and the Camunda BPMN engine.
+
+2. Once the services are up, you can:
+    - Access the Camunda Operate UI to launch and monitor workflows by navigating to the provided URL (e.g., `http://localhost:8081`).
+    - Interact with the APIs of the Customer Service through its Swagger documentation (e.g., `http://localhost:8000/docs`).
+    - Access the PostgreSQL database using Adminer at `http://localhost:8080`.
+
+3. To stop the services (microservices and Camunda), run the `stop.sh` script located at the root of the project:
+    ```bash
+    ./stop.sh
+    ```
+
+All microservice port are defined in the `.env` file, and you can modify them as needed. The Camunda BPMN ports are explained in the official documentation highlighted above.
+
+**Make sure Docker and Docker Compose V2 are installed and running on your system before executing the script.**
 
 ---
 

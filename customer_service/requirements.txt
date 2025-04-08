@@ -5,3 +5,7 @@ psycopg2-binary
 pytz
 requests
 pydantic
+grpcio
+protobuf
+grpcio-tools
+zeep
