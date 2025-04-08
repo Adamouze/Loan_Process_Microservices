@@ -8,7 +8,7 @@ class Mutation:
     @strawberry.mutation
     def validate_check(self, check: CheckInput) -> bool:
         if not check.check_id.startswith("CHK"):
-            notify_bounced_check(email=check.email)
+            notify_bounced_check(phone=check.phone_number, message="Check bounced")
             return False
         return True
 

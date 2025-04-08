@@ -7,4 +7,4 @@ class CheckInput:
     issue_date: str
     check_id: str
     amount: float
-    phone_number: str  # nécessaire pour notifier
+    phone_number: str

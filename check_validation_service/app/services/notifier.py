@@ -1,14 +1,16 @@
 import requests
+import os
 
-NOTIFICATION_SERVICE_URL = "http://notification_service:8004/notify"  # Docker name + port
+NOTIFICATION_SERVICE_URL = os.getenv("NOTIFICATION_SERVICE_URL", "http://notification_service:8000")
 
-def send_sms_notification(phone_number: str, message: str):
+def notify_bounced_check(phone_number: str, message: str) -> bool:
     try:
         response = requests.post(
-            NOTIFICATION_SERVICE_URL,
-            json={"phone_number": phone_number, "message": message},
+            f"{NOTIFICATION_SERVICE_URL}/notify",
+            json={"phone": phone_number, "message": message},
             timeout=5
         )
-        response.raise_for_status()
-    except requests.RequestException as e:
-        print(f"Erreur lors de l'envoi de la notification : {e}")
+        return response.status_code == 200
+    except requests.exceptions.RequestException as e:
+        print(f"Notification failed: {e}")
+        return False

@@ -44,19 +44,19 @@ services:
       - DB_NAME=${DB_NAME}
       - CUSTOMER_PORT=${CUSTOMER_PORT}
 
-  risk_service:
-    build: ./risk_service
-    container_name: risk_service
-    environment:
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
-      - RISK_GRPC_PORT=${RISK_GRPC_PORT}
+  #risk_service:
+  #  build: ./risk_service
+  #  container_name: risk_service
+  #  environment:
+  #    - DB_HOST=${DB_HOST}
+  #    - DB_PORT=${DB_PORT}
+  #    - DB_USER=${DB_USER}
+  #    - DB_PASSWORD=${DB_PASSWORD}
+  #    - DB_NAME=${DB_NAME}
+  #    - RISK_GRPC_PORT=${RISK_GRPC_PORT}
     # No port exposed — internal communication only
 
-  check_service:
+  check_validation_service:
     build: ./check_validation_service
     container_name: check_validation_service
     environment:
@@ -66,7 +66,8 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - CHECK_PORT=${CHECK_PORT}
-
+    ports:
+      - 8001:8001
     # No port exposed — internal communication only
 
   loan_provider_service:
