@@ -71,7 +71,7 @@ services:
       - DB_NAME=${DB_NAME}
       - CHECK_PORT=${CHECK_PORT}
     ports:
-      - 8001:8001
+      - ${CHECK_PORT}:${CHECK_PORT}
     # No port exposed — internal communication only
 
   loan_provider_service:
@@ -96,6 +96,9 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - NOTIFICATION_PORT=${NOTIFICATION_PORT}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
     ports:
       - "${NOTIFICATION_PORT}:${NOTIFICATION_PORT}" # Exposed for client communication
 
