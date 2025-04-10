@@ -1,16 +1,21 @@
-from twilio.rest import Client
-from .config import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+import os
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
-def send_notification(phone_number: str, message: str) -> bool:
+api_key = os.environ.get('SENDGRID_API_KEY')
+sender_address = os.environ.get('SENDER_ADDRESS')
+
+def send_notification(receiver_address: str, message: str) -> int:
+    mail = Mail(
+        from_email = sender_address,
+        to_emails = receiver_address,
+        subject = 'Loan Process Microservice Status',
+        html_content = message)
+    # message du type : '<strong>and easy to do anywhere, even with Python</strong>'
+    
     try:
-        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-        message = client.messages.create(
-            body=message,
-            from_=TWILIO_PHONE_NUMBER,
-            to=phone_number
-        )
-        print(f"SMS envoyé. SID : {message.sid}")
-        return True
+        sg = SendGridAPIClient(api_key)
+        response = sg.send(mail)
+        return response.status_code
     except Exception as e:
-        print(f"Erreur lors de l'envoi du SMS : {e}")
-        return False
+        print(str(e))
