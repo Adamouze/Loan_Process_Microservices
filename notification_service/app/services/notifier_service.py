@@ -5,6 +5,12 @@ from sendgrid.helpers.mail import Mail
 api_key = os.environ.get('SENDGRID_API_KEY')
 sender_address = os.environ.get('SENDER_ADDRESS')
 
+if not api_key :
+    raise ValueError("SENDGRID_API_KEY environment variable not set.")
+
+if not sender_address:
+    raise ValueError("SENDER_ADDRESS environment variable not set.")
+
 def send_notification(receiver_address: str, message: str) -> int:
     mail = Mail(
         from_email = sender_address,
