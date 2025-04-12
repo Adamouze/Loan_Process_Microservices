@@ -3,7 +3,7 @@ import os
 import re
 from sqlalchemy.orm import Session
 from db.database import get_db
-from orm.orm import CashierCheck as CashierCheckORM, Bank as BankORM, Customer as CustomerORM, Account as AccountORM
+from orm.orm import CashierCheck as CashierCheckORM, Bank as BankORM
 
 def validate_check_service(bank_id: int, check_id: int) -> bool:
     try:
@@ -18,10 +18,7 @@ def validate_check_service(bank_id: int, check_id: int) -> bool:
         elif not bank :
             print("Banque introuvable")
             return False
-
-        # Print pour tester
-        print(f"[DEBUG] Bank pattern: {repr(bank.cashier_check_validity_pattern)}")
-        print("check_number : " + check.check_number)
+        
         if re.fullmatch(bank.cashier_check_validity_pattern, check.check_number):
             return True
         else:          
