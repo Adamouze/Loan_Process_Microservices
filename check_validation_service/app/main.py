@@ -1,9 +1,18 @@
 from fastapi import FastAPI
-from strawberry.fastapi import GraphQLRouter
-from schema.resolvers import schema
+from routes import check_validation
+import uvicorn
+import os
 
+CHECK_PORT = int(os.getenv("CHECK_PORT"))
+
+if not CHECK_PORT or CHECK_PORT <= 0:
+    raise ValueError("CHECK_PORT environment variable not set.")
+
+# FastAPI app initialization
 app = FastAPI()
 
-graphql_app = GraphQLRouter(schema)
+# Include all routers
+app.include_router(check_validation.router)
 
-app.include_router(graphql_app, prefix="/check_validation")
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=CHECK_PORT)

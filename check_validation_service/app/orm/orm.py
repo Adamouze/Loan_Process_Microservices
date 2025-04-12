@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Text, DateTime, ForeignKey, Boolean, DECIMAL
 from sqlalchemy.orm import relationship
-from ..db.database import Base
+from db.database import Base
 from datetime import datetime
 
 
@@ -75,7 +75,6 @@ class CashierCheck(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     account_id = Column(Integer, ForeignKey("account.id", ondelete="CASCADE"), nullable=False)
-    bank_id = Column(Integer, ForeignKey("bank.id", ondelete="CASCADE"), nullable=False)
     check_number = Column(String(50), nullable=False)
     issue_date = Column(DateTime, nullable=False)
     amount = Column(DECIMAL(15, 3), nullable=False)

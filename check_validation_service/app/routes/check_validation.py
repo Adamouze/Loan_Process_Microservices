@@ -1,16 +1,13 @@
-import strawberry
-from strawberry.fastapi import GraphQLRouter
-from app.schema.types import CheckInput
-from app.services.notifier import notify_bounced_check
+from fastapi import APIRouter, Query
+from services.check_validation import validate_check_service
+from models.check_validation_request import CheckValidationRequest
 
-@strawberry.type
-class Mutation:
-    @strawberry.mutation
-    def validate_check(self, check: CheckInput) -> bool:
-        if not check.check_id.startswith("CHK"):
-            notify_bounced_check(phone=check.phone_number, message="Check bounced")
-            return False
-        return True
+router = APIRouter(
+    prefix="/check_validation",
+    tags=["check_validation"]
+)
 
-schema = strawberry.Schema(mutation=Mutation)
-graphql_app = GraphQLRouter(schema)
+@router.post("/")
+def validate_check(request: CheckValidationRequest):
+    success = validate_check_service(request.bank_id, request.check_id)
+    return {"status": "success" if success else "failed"}

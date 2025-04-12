@@ -1,4 +1,6 @@
 strawberry-graphql
+psycopg2-binary
 fastapi[standard]
 uvicorn
 requests
+sqlalchemy

@@ -35,5 +35,5 @@ INSERT INTO banking_transaction (account_id, transaction_type, amount) VALUES
 (4, 'withdrawal', 200.00);
 
 -- Insert a cashier's check for Bruno (customer_id=2, account_id=2)
-INSERT INTO cashier_check (account_id, check_number, issue_date, amount, is_valid) VALUES
-(2, 'CM12345678', '2024-03-01 10:00:00', 10000.000, true);
+INSERT INTO cashier_check (account_id, check_number, issue_date, amount, is_valid, created_at) VALUES
+(2, 'CM12345678', '2024-03-01 10:00:00', 10000.000, true, '2024-01-01 10:00:00');
