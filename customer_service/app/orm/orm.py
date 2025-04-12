@@ -78,7 +78,7 @@ class CashierCheck(Base):
     check_number = Column(String(50), nullable=False)
     issue_date = Column(DateTime, nullable=False)
     amount = Column(DECIMAL(15, 3), nullable=False)
-    is_valid = Column(Boolean, nullable=False)
+    is_valid = Column(Boolean, nullable=True, default=False)
     created_at = Column(DateTime, nullable=True, default=datetime.now)
 
     # Ensure unique constraint on account_id and check_number

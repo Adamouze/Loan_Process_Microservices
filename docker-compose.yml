@@ -98,8 +98,6 @@ services:
       - NOTIFICATION_PORT=${NOTIFICATION_PORT}
       - SENDGRID_API_KEY=${SENDGRID_API_KEY}
       - SENDER_ADDRESS=${SENDER_ADDRESS}
-    ports:
-      - "${NOTIFICATION_PORT}:${NOTIFICATION_PORT}" # Exposed for client communication
 
 volumes:
   db_data:

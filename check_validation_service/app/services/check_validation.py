@@ -1,5 +1,3 @@
-import requests
-import os
 import re
 from sqlalchemy.orm import Session
 from db.database import get_db
@@ -13,11 +11,9 @@ def validate_check_service(bank_id: int, check_id: int) -> bool:
         bank = db.query(BankORM).filter(BankORM.id == bank_id).first()
 
         if not check :
-            print("Chèque introuvable")
-            return False
+            raise Exception("Chèque introuvable")
         elif not bank :
-            print("Banque introuvable")
-            return False
+            raise Exception("Banque introuvable")
         
         if re.fullmatch(bank.cashier_check_validity_pattern, check.check_number):
             return True
@@ -25,5 +21,4 @@ def validate_check_service(bank_id: int, check_id: int) -> bool:
             return False
 
     except Exception as e:
-        print(f"Request failed: {e}")
-        return False
+        raise e

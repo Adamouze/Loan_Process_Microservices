@@ -15,6 +15,7 @@ class CashierCheckBase(CashierCheckGenerateResponse):
     pass
 
 class CashierCheckCreate(CashierCheckBase):
+    is_valid: Optional[bool] = True
     pass
 
 class CashierCheckResponse(BaseModel):

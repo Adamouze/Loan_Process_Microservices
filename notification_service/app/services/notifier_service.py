@@ -24,4 +24,4 @@ def send_notification(receiver_address: str, message: str) -> int:
         response = sg.send(mail)
         return response.status_code
     except Exception as e:
-        print(str(e))
+        raise e

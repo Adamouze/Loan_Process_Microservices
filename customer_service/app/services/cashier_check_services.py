@@ -8,8 +8,6 @@ import re
 import os
 from datetime import datetime, timedelta
 
-GRAPHQL_ENDPOINT = os.getenv("GRAPHQL_ENDPOINT", 0)
-
 # generate a cashier check
 def generate_cashier_check(cashier_check: CashierCheckGenerate, db: Session):
     # Check if the account exists
@@ -30,7 +28,7 @@ def generate_cashier_check(cashier_check: CashierCheckGenerate, db: Session):
                         lambda x: ''.join(random.choices('0123456789', k=int(x.group(1)))), 
                         pattern)
         # Check if the generated account number is unique
-        existing_check_number = db.query(CashierCheckORM).filter(CashierCheckORM.check_number == generated_check_number).first()
+        existing_check_number = db.query(CashierCheckORM).filter(cashier_check.check_number == generated_check_number).first()
         if not existing_check_number:
             break
 
@@ -47,57 +45,26 @@ def generate_cashier_check(cashier_check: CashierCheckGenerate, db: Session):
     
     return generated_check
     
+def submit_cashier_check(cashier_check: CashierCheckCreate, db: Session):
+        
+    # Check if the account exists
+    account = db.query(AccountORM).filter(AccountORM.account_number == cashier_check.account_number).first()
+    if not account:
+        raise NotFoundError("Account not found")
 
-# TODO : Implement the GraphQL mutation to create and verify a cashier check
-# def submit_cashier_check(cashier_check: CashierCheckCreate):
-#     query = """
-#     mutation CreateAndVerifyCashierCheck($input: CashierCheckInput!) {
-#         createAndVerifyCashierCheck(input: $input) {
-#             check_number
-#             is_valid
-#             message
-#         }
-#     }
-#     """
-#     variables = {
-#         "input": {
-#             "account_number": cashier_check.account_number,
-#             "bank_name": cashier_check.bank_name,
-#             "check_number": cashier_check.check_number,
-#             "issue_date": cashier_check.issue_date,
-#             "amount": cashier_check.amount
-#         }
-#     }
-#     response = requests.post(GRAPHQL_ENDPOINT, json={"query": query, "variables": variables})
-#     return response.json()
+    cashier_check_to_create = CashierCheckORM(
+        account_id=account.id,
+        check_number=cashier_check.check_number,
+        issue_date=cashier_check.issue_date,
+        amount=cashier_check.amount,
+        is_valid=cashier_check.is_valid
+    )
 
-# def create_cashier_check(CashierCheck : CashierCheckCreate, db: Session):
-#
-#         # Check if the account exists
-#         account = db.query(AccountORM).filter(AccountORM.account_number == CashierCheck.account_number).first()
-#         if not account:
-#             raise NotFoundError("Account not found")
+    db.add(cashier_check_to_create)
+    db.commit()
+    db.refresh(cashier_check_to_create)
 
-#         # Check if the bank exists
-#         bank = db.query(BankORM).filter(BankORM.name == CashierCheck.bank_name).first()
-#         if not bank:
-#             raise NotFoundError("Bank not found")
-
-#         cashier_check = CashierCheckORM(
-#             account_number=CashierCheck.account_number,
-#             bank_name=CashierCheck.bank_name,
-#             check_number=CashierCheck.check_number,
-#             issue_date=datetime.strptime(CashierCheck.issue_date, "%Y-%m-%d"),
-#             amount=CashierCheck.amount,
-#             is_valid=False, # Assuming default is invalid
-#             created_at=datetime.now()
-#         )
-
-#         db.add(cashier_check)
-#         db.commit()
-#         db.refresh(cashier_check)
-
-#         return cashier_check
+    return cashier_check_to_create
 
 
 # Get cashier check by check number
