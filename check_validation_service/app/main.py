@@ -2,10 +2,10 @@ from fastapi import FastAPI
 from strawberry.fastapi import GraphQLRouter
 import strawberry
 import uvicorn
-from schema import Query
+from schema.schema import Query
 import os
 
-CHECK_PORT = int(os.getenv("CHECK_PORT", "8000"))
+CHECK_PORT = int(os.getenv("CHECK_PORT"))
 
 if not CHECK_PORT or CHECK_PORT <= 0:
     raise ValueError("CHECK_PORT environment variable not set.")
