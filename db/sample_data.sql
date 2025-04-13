@@ -1,7 +1,7 @@
 -- Insert customers
 INSERT INTO customer (full_name, email) VALUES
 ('Adam Ouzegdouh', 'adam.ouzegdouh@telecom-sudparis.eu'),
-('Bruno Marchand', 'bruno@example.com'),
+('Walid Gaaloul', 'walid.gaaloul@telecom-sudparis.eu'),
 ('Claire Fontaine', 'claire@example.com'),
 ('David Rousseau', 'david@example.com');  -- Without account
 
