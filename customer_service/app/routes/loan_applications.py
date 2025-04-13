@@ -12,7 +12,8 @@ from ..services.loan_application_and_monotoring_services import (
 from ..models.loan_application_and_monitoring import (
     Loan_ApplicationCreate, 
     Loan_ApplicationResponse,
-    Loan_Application_with_MonitoringResponse
+    Loan_Application_with_MonitoringResponse,
+    LoanMonitoringResponse
 )
 
 router = APIRouter(
@@ -26,7 +27,11 @@ def create_loan(loan_application: Loan_ApplicationCreate, db: Session = Depends(
 
 @router.post("/with-monitoring", response_model=Loan_Application_with_MonitoringResponse)
 def create_loan_with_monitoring(loan_application: Loan_ApplicationCreate, db: Session = Depends(get_db)):
-    return create_loan_application_with_monitoring(loan_application, db)
+    result = create_loan_application_with_monitoring(loan_application, db)
+    return Loan_Application_with_MonitoringResponse(
+        Loan_Application=Loan_ApplicationResponse.model_validate(result["Loan_Application"]),
+        Loan_Monitoring=LoanMonitoringResponse.model_validate(result["Loan_Monitoring"])
+    )
 
 @router.get("/{loan_id}", response_model=Loan_ApplicationResponse)
 def get_loan(loan_id: int, db: Session = Depends(get_db)):
@@ -38,4 +43,8 @@ def get_loans_by_account(account_number: str, db: Session = Depends(get_db)):
 
 @router.get("/{loan_id}/with-monitoring", response_model=Loan_Application_with_MonitoringResponse)
 def get_loan_with_monitoring(loan_id: int, db: Session = Depends(get_db)):
-    return get_loan_application_with_monitoring(loan_id, db)
+    result = get_loan_application_with_monitoring(loan_id, db)
+    return Loan_Application_with_MonitoringResponse(
+        Loan_Application=Loan_ApplicationResponse.model_validate(result["Loan_Application"]),
+        Loan_Monitoring=LoanMonitoringResponse.model_validate(result["Loan_Monitoring"])
+    )

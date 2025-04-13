@@ -96,6 +96,6 @@ services:
       - NOTIFICATION_PORT=${NOTIFICATION_PORT}
       - SENDGRID_API_KEY=${SENDGRID_API_KEY}
       - SENDER_ADDRESS=${SENDER_ADDRESS}
-
+    # No port exposed — internal communication only
 volumes:
   db_data:

@@ -3,13 +3,9 @@ from app.models.loan_application_and_monitoring import Loan_ApplicationCreate, L
 from app.orm.orm import LoanApplication as Loan_ApplicationORM, Customer as CustomerORM, Account as AccountORM, LoanMonitoring as LoanMonitoringORM
 from app.error_handling.error_types import NotFoundError, LoanAmountTooHighError
 
-MAX_LOAN_AMOUNT = 1000000  # Maximum loan amount allowed
 
 # Create a loan application
 def create_loan_application(loan_application: Loan_ApplicationCreate, db: Session):
-    if loan_application.loan_amount > MAX_LOAN_AMOUNT:
-        raise LoanAmountTooHighError("Loan amount exceeds the maximum limit")
-    
     account = db.query(AccountORM).filter(AccountORM.account_number == loan_application.account_number).first()
     if not account:
         raise NotFoundError("Account not found")
@@ -58,10 +54,10 @@ def create_loan_application_with_monitoring(loan_application: Loan_ApplicationCr
     loan_application_record = create_loan_application(loan_application, db)
     loan_monitoring_record = create_loan_monitoring(loan_application_record.id, db)
     
-    return Loan_Application_with_MonitoringResponse(
-        Loan_Application=loan_application_record,
-        Loan_Monitoring=loan_monitoring_record
-    )
+    return {
+        "Loan_Application": loan_application_record,
+        "Loan_Monitoring": loan_monitoring_record
+    }
 
 # Get a loan application by ID
 def get_loan_application_by_id(loan_application_id: int, db: Session):
@@ -86,9 +82,9 @@ def get_loan_application_with_monitoring(loan_application_id: int, db: Session):
     if not loan_application:
         raise NotFoundError("No loan_application found with that id")
     
-    return Loan_Application_with_MonitoringResponse(
-        Loan_Application=loan_application,
-        Loan_Monitoring=loan_application.loan_monitoring
-    )
+    return {
+        "Loan_Application": loan_application,
+        "Loan_Monitoring": loan_application.loan_monitoring
+    }
 
 

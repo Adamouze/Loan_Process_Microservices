@@ -28,7 +28,7 @@ def generate_cashier_check(cashier_check: CashierCheckGenerate, db: Session):
                         lambda x: ''.join(random.choices('0123456789', k=int(x.group(1)))), 
                         pattern)
         # Check if the generated account number is unique
-        existing_check_number = db.query(CashierCheckORM).filter(cashier_check.check_number == generated_check_number).first()
+        existing_check_number = db.query(CashierCheckORM).filter(CashierCheckORM.check_number == generated_check_number).first()
         if not existing_check_number:
             break
 
@@ -46,7 +46,6 @@ def generate_cashier_check(cashier_check: CashierCheckGenerate, db: Session):
     return generated_check
     
 def submit_cashier_check(cashier_check: CashierCheckCreate, db: Session):
-        
     # Check if the account exists
     account = db.query(AccountORM).filter(AccountORM.account_number == cashier_check.account_number).first()
     if not account:

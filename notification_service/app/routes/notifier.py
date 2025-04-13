@@ -9,5 +9,5 @@ router = APIRouter(
 
 @router.post("/notify")
 def notify(payload: NotificationRequest):
-    success = send_notification(payload.receiver_address, payload.message)
-    return {"status": "message sent successfully" if success==202 else "message failed"}
+    send_notification_response = send_notification(payload)
+    return send_notification_response

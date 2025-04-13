@@ -16,6 +16,6 @@ def send_notification_service(notification: NotificationRequest) -> Notification
         "Accept": "application/json"
     }
 
-    response = requests.post(url, json=notification, headers=headers)
+    response = requests.post(url, json=notification.model_dump(), headers=headers)
     response.raise_for_status()
     return NotificationResponse(**response.json())

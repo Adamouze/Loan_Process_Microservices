@@ -1,5 +1,6 @@
 from zeep import Client
 import os
+from decimal import Decimal
 
 # Load environment variables
 LOAN_PROVIDER_PORT = os.getenv("LOAN_PROVIDER_PORT")
@@ -12,7 +13,7 @@ wsdl_url = f"http://loan_provider_service:{LOAN_PROVIDER_PORT}/?wsdl"
 
 Soap_client = Client(wsdl=wsdl_url)
 
-def transfer_funds(account_id: int, amount: float):
+def transfer_funds(account_id: int, amount: Decimal):
     response = Soap_client.service.transfer_funds(account_id, amount)
     return response
 

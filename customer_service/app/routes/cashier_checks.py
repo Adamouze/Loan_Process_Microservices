@@ -10,11 +10,11 @@ router = APIRouter(
     tags=["cashier-checks"]
 )
 
-@router.post("/", response_model=CashierCheckGenerateResponse)
+@router.post("/generate", response_model=CashierCheckGenerateResponse)
 def generate_cashier_check(cashier_check_generate: CashierCheckGenerate, db: Session = Depends(get_db)):
     return generate_cashier_check_service(cashier_check_generate, db)
 
-@router.post("/", response_model=CashierCheckResponse)
+@router.post("/submit", response_model=CashierCheckResponse)
 def submit_cashier_check(cashier_check: CashierCheckCreate):
     return submit_cashier_check_service(cashier_check)
 

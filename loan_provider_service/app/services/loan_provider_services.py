@@ -1,4 +1,5 @@
 from spyne import rpc, ServiceBase, Unicode, Integer
+from spyne import Decimal as SpyneDecimal
 from sqlalchemy.orm import Session
 from datetime import datetime
 from app.db.database import get_db
@@ -6,7 +7,7 @@ from app.orm.orm import Account as AccountORM, BankingTransaction as BankingTran
 from app.error_handling.error_types import NotFoundError
 
 class LoanProviderService(ServiceBase):
-    @rpc(Integer, Integer, _returns=Unicode)
+    @rpc(Integer, SpyneDecimal, _returns=Unicode)
     def transfer_funds(ctx, account_id, amount):
         db: Session = next(get_db())
 

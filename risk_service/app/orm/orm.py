@@ -8,12 +8,9 @@ class Account(Base):
     __tablename__ = "account"
 
     id = Column(Integer, primary_key=True, index=True)
-    customer_id = Column(Integer, ForeignKey("customer.id", ondelete="CASCADE"), nullable=False)
-    bank_id = Column(Integer, ForeignKey("bank.id", ondelete="CASCADE"), nullable=False)
     account_number = Column(String(20), unique=True, nullable=False)
     balance = Column(DECIMAL(15, 2), nullable=False, default=0)
-    from datetime import datetime
-    created_at = Column(DateTime, nullable=True, default=datetime.now)
+    created_at = Column(DateTime, nullable=True, default=datetime.now, onupdate=None)
     updated_at = Column(DateTime, nullable=True, default=datetime.now)
 
     # Relationships
