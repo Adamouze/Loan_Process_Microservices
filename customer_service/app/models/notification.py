@@ -62,7 +62,7 @@ class MessageType(BaseModel):
     )
     Check_Validation_Rejected: str = "Check Validation Service: invalid cashier check."
     Loan_Provided: str = (
-        "Loan Provider Service:<br><br>Loan provided.<br>Details:"
+        "Loan Provider Service:<br><br>Loan provided."
     )
 
     @classmethod
