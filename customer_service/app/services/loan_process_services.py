@@ -62,7 +62,7 @@ def loan_process_service_first_part(loan_application: Loan_ApplicationCreate, db
         loan_monitoring_record.risk_status = "rejected"
         loan_monitoring_record.check_validation_status = "rejected"
         loan_monitoring_record.loan_provider_status = "rejected"
-        loan_monitoring_record.customer_status = "rejected"
+        loan_monitoring_record.customer_status = f"Requested amount: {loan_application.loan_amount}, Maximum allowed: {MAX_LOAN_AMOUNT}"
         db.commit()
         db.refresh(loan_application_record)
         db.refresh(loan_monitoring_record)
