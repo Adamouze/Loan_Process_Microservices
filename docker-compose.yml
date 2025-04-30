@@ -12,8 +12,6 @@ services:
       - db_data:/var/lib/postgresql/data # Persist Data
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql # Initialize the database with a script
       - ./db/sample_data.sql:/docker-entrypoint-initdb.d/sample_data.sql # Add sample data script in the same way
-    ports:
-      - "${DB_PORT}:${DB_PORT}" # Exposed only for development
 
   adminer:
     image: adminer
@@ -22,7 +20,7 @@ services:
       - db
     restart: always
     ports:
-      - "${ADMINER_PORT}:${ADMINER_PORT}"
+      - "${ADMINER_PORT}:${ADMINER_PORT}" # Exposed for database management (Development only)
     
 
   customer_service:

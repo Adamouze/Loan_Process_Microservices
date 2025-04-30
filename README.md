@@ -6,6 +6,8 @@
 
 The project is designed around a distributed architecture where different components communicate through REST, SOAP, gRPC, and GraphQL APIs. Each service is containerized using Docker and orchestrated using Docker Compose. The backend uses a PostgreSQL database for persistence.
 
+---
+
 ## Original Project Subject
 Consider a scenario where a financial services firm offers to its customers a loan request service as following:
 
@@ -18,6 +20,8 @@ Consider a scenario where a financial services firm offers to its customers a lo
 7. In the approval case, the financial services firm requests the loan amount from its own provider and sends it to the customer's bank account.
 8. Finally, the customer is notified about the firm decision (approval or rejection).
 
+---
+
 ## Project Goals
 
 This project aims to:
@@ -28,14 +32,14 @@ This project aims to:
 - Use Docker for containerization and Docker Compose for orchestration.
 - Implement clean and scalable service boundaries to respect **single responsibility** principle
 
-
+---
 
 ## Architecture (Microservices & Responsibilities)
 
 Each major functionality from the scenario is assigned to a dedicated service:
 
 ### 1. **Customer Service (REST)** ADAM
-- Handles customer loan requests (ID, personal info, loan type, amount, description).
+- Handles customer loan requests (ID, personal info, loan type, amount, description, etc...).
 - Validates the maximum allowed loan amount.
 - Coordinates the loan process by calling other services.
 - **Reason for REST:** Public-facing service with standard HTTP operations and high accessibility.
@@ -56,13 +60,42 @@ Each major functionality from the scenario is assigned to a dedicated service:
 - **Reason for SOAP:**  This service simulates a legacy external system (e.g., a traditional bank API) that exposes only a SOAP interface, which is common in older financial infrastructures.
 
 ### 5. **Notification Service (REST)** LOUIS
-- Notifies the customer about loan approval or rejection.
+- Notifies the customer (by mail) about loan approval or rejection.
 - Can be internal or expose a small API.
+- Uses SendGridAPI for email notifications.
 - **Reason for REST:** Simple, loosely coupled notification trigger with potential future externalization.
 
 ### 6. **PostgreSQL Database** ADAM
 - Stores customer profiles, loan requests, and decision history.
 - **Reason:** Reliable relational model to track structured and linked financial data.
+
+---
+
+## Public API Exposure & Security
+
+In this microservice architecture, **only the `Customer Service` exposes a public REST interface**. This API provides standard **CRUD endpoints** to manage core entities such as:
+
+- Customers
+- Banks
+- Accounts
+- Cashier's Checks
+- Loans (Applications and Monitoring)
+- Banking Transactions
+
+It acts as the **primary entry point** for external systems or users interacting with the loan application process.
+
+All other microservices—such as:
+
+- `Risk Evaluation Service` (gRPC),
+- `Check Validation Service` (GraphQL),
+- `Loan Provider Service` (SOAP),
+- `Notification Service` (REST, internal only)
+
+are designed to be **internal-only** and not publicly exposed.
+
+> This design ensures strict **encapsulation** and promotes the **principle of least privilege**, where only essential APIs are exposed externally.
+
+---
 
 ## BPMN Workflow Integration
 
@@ -89,71 +122,85 @@ Documentation **Camunda Platform 8** `docker compose` : https://docs.camunda.io/
 
 This integration will be done **after core microservices are stable**, so the BPM engine can serve purely as an orchestrator.
 
+---
+
 ## Stack & Tools
 
 - **Docker**: Containerization of all services.
 - **Docker Compose**: Service orchestration and local development environment.
 - **PostgreSQL**: Relational database.
-- **REST (FastAPI / Spring Boot)**: For main HTTP interfaces.
-- **gRPC (Python / Java)**: For performant internal communication.
-- **GraphQL (Python / Java)**: For structured and flexible queries.
+- **REST (FastAPI/Python)**: For main HTTP interfaces.
+- **SOAP (Python)**: For legacy external service simulation.
+- **gRPC (Python)**: For performant internal communication.
+- **GraphQL (Python/Strawberry)**: For structured and flexible queries.
+
+---
 
 ## Hypothetical Project Structure
 ```
 Loan_Process_Microservices/
-├── docker-compose.yml
-├── .env
-├── README.md
-
-├── customer_service/           # REST - FastAPI
-│   ├── app/
-│   │   ├── main.py
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── error_handling/
-│   │   ├── orm/
-│   │   └── models/
-│   ├── requirements.txt
-│   └── Dockerfile
-
-├── risk_service/              # gRPC - Python
-│   ├── app/
-│   │   ├── server.py
-│   │   ├── proto/
-│   │   └── logic/
-│   ├── requirements.txt
-│   └── Dockerfile
-
-├── check_validation_service/             # GraphQL - Strawberry
-│   ├── app/
-│   │   ├── main.py
-│   │   └── schema/
-│   ├── requirements.txt
-│   └── Dockerfile
-
-├── loan_provider_service/     # SOAP
-│   ├── app/
-│   │   ├── main.py
-│   │   └── transfer_logic/
-│   ├── requirements.txt
-│   └── Dockerfile
-
-├── notification_service/      # REST - simple notifier
-│   ├── app/
-│   │   ├── main.py
-│   │   └── notifier/
-│   ├── requirements.txt
-│   └── Dockerfile
-
-├── db/
-│   ├── init.sql               # Initial schema
-│   └── sample_data.sql        # Sample data for demonstration
-
-├── camunda/ # BPMN engine (Camunda Platform 8) 
-│   ├── docker-compose.yml # Separate for orchestration stack 
-│   └── processes/ 
-│       ├── loan_process.bpmn # BPMN diagram to deploy
-
+    ├── .env                           # Environment variables for Docker/services
+    ├── .gitignore                     # Git ignored files
+    ├── docker-compose.yml             # Main orchestration file for services
+    ├── openapi.json                   # OpenAPI specification of Customer Service for importing into Postman to test APIs
+    ├── README.md                      # Project documentation
+    ├── run.sh                         # Script to start all services
+    ├── stop.sh                        # Script to stop all services
+    ├── SQL_Relational_UML.svg         # UML diagram for SQL schema
+    ├── SQL_Relational_UML_code.puml   # UML code source (PlantUML)
+    ├── Workflow_Loan_Application_Process.svg # BPMN process diagram
+    ├── customer_service/              # FastAPI REST microservice for core loan/customer logic
+    │   ├── app/
+    │   │   ├── main.py                               # FastAPI app entrypoint
+    │   │   ├── routes/                               # REST API endpoints
+    │   │   ├── services/                             # Business logic layer
+    │   │   ├── models/                               # Pydantic data models
+    │   │   ├── orm/                                  # ORM mapping via SQLAlchemy
+    │   │   ├── db/                                   # Database connection setup
+    │   │   ├── error_handling/                       # Custom error types and handlers
+    │   │   ├── risk_service_grpc_client/             # gRPC client to Risk Service
+    │   │   ├── risk_service_proto_client/            # gRPC proto files
+    │   │   ├── loan_provider_service_soap_client/    # SOAP client to external provider
+    │   │   ├── check_validation_service_graphql_client/ # GraphQL client to validation service
+    │   │   └── notification_service_client/          # REST client for notifications
+    ├── risk_service/                 # gRPC-based risk analysis service
+    │   ├── app/
+    │   │   ├── main.py               # gRPC server entrypoint
+    │   │   ├── service/              # Risk evaluation logic
+    │   │   ├── proto/                # gRPC proto definitions
+    │   │   ├── orm/                  # ORM mapping
+    │   │   └── db/                   # Database setup
+    ├── check_validation_service/    # GraphQL-based data validation service
+    │   ├── app/
+    │   │   ├── main.py               # Strawberry GraphQL server
+    │   │   ├── schema/               # GraphQL schema definition
+    │   │   ├── resolvers/            # Query/mutation resolvers
+    │   │   ├── orm/                  # ORM mapping
+    │   │   └── db/                   # Database setup
+    ├── loan_provider_service/       # SOAP interface for external loan providers
+    │   ├── app/
+    │   │   ├── main.py               # SOAP-like endpoint simulation
+    │   │   ├── services/             # Loan provider call logic
+    │   │   ├── error_handling/       # SOAP error definitions
+    │   │   ├── orm/                  # ORM mapping
+    │   │   └── db/                   # Database setup
+    ├── notification_service/        # Lightweight REST service for notifications
+    │   ├── app/
+    │   │   ├── main.py               # FastAPI notifier service
+    │   │   ├── models/               # Notification model (e.g., email, SMS)
+    │   │   ├── services/             # Notification sending logic
+    │   │   └── routes/               # API routes for triggering notifications
+    ├── db/                           # SQL database initialization scripts
+    │   ├── init.sql                  # Initial schema setup
+    │   └── sample_data.sql           # Sample data for demo/testing
+    └── camunda/                      # BPMN workflow orchestration with Camunda
+        ├── docker-compose.yaml       # Camunda stack configuration
+        ├── docker-compose-core.yaml  # Camunda core services
+        ├── docker-compose-web-modeler.yaml # Web modeler configuration
+        ├── .optimize/                # Camunda Optimize config
+        ├── .web-modeler/             # Camunda Modeler environment settings
+        ├── connector-secrets.txt     # Secrets for connectors
+        └── README.md                 # Camunda-specific documentation
 ```
 ---
 
@@ -195,6 +242,41 @@ To run the project, follow these steps:
 All microservice ports are defined in the `.env` file, and you can modify them as needed. The Camunda BPMN ports are explained in the official documentation highlighted above.
 
 **Make sure Docker and Docker Compose V2 are installed and running on your system before executing the script.**
+
+---
+
+## API Testing with Postman (Customer Service)
+
+To test the Customer Service REST API efficiently, you can use **Postman** by importing the provided OpenAPI specification.
+
+### How to Import `openapi.json` in Postman
+
+1. Open **Postman** and click on **Import**.
+2. Choose **"File"** if you have the local `openapi.json`
+3. Postman will automatically generate a collection titled **Customer Service REST API**, containing all available endpoints.
+
+### Main Endpoints for Simulating the Loan Process
+
+After importing, focus on these key **POST** routes available under `loan-process` and `cashier-checks`:
+
+#### `POST /loan-process/first-part`
+- **Name in Postman**: `Loan Process First Part`
+- **Description**: Initiates the loan request.
+- Accepts customer loan data (account number, loan type, amount, description).
+- Checks maximum allowed amount.
+- Triggers internal gRPC call to the Risk Evaluation Service.
+
+#### `POST /cashier-checks/generate`
+- **Name in Postman**: `Generate Cashier Check`
+- **Description**: Simulates the creation of a cashier’s check after a risk-accepted application.
+- This mimics customer-side submission before bank-side validation.
+
+#### `POST /loan-process/second-part`
+- **Name in Postman**: `Loan Process Second Part`
+- **Description**: Completes the loan process.
+- Validates the cashier’s check via the Check Validation GraphQL Service.
+- Requests the loan from the Loan Provider SOAP service.
+- Sends a notification to the customer via email with SendGridAPI.
 
 ---
 
