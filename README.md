@@ -228,20 +228,23 @@ To run the project, follow these steps:
     git clone https://github.com/Adamouze/Loan_Process_Microservices.git
     ```
 
-2. Replace SendGridAPI credentials (API key and sender address) in the `.env` file located in the root directory of the project. This is necessary for the notification service to send emails.
+2. Replace SendGridAPI credentials (API key and sender address) in the `.env_example` file located in the root directory of the project. This is necessary for the notification service to send emails. After replacing the credentials, rename the file to `.env`.
+    ```bash
+    mv .env_example .env
+    ```
 
-1. Execute the `run.sh` script located at the root of the project:
+3. Execute the `run.sh` script located at the root of the project:
     ```bash
     ./run.sh
     ```
     This script will start both the Docker Compose stack for the microservices and the Camunda BPMN engine.
 
-2. Once the services are up, you can:
+4. Once the services are up, you can:
     - Access the Camunda Operate UI to launch and monitor workflows by navigating to the provided URL (e.g., `http://localhost:8081`).
     - Interact with the APIs of the Customer Service through its Swagger documentation (e.g., `http://localhost:8000/docs`).
     - Access the PostgreSQL database using Adminer at `http://localhost:8080`.
 
-3. To stop the services (microservices and Camunda), run the `stop.sh` script located at the root of the project:
+5. To stop the services (microservices and Camunda), run the `stop.sh` script located at the root of the project:
     ```bash
     ./stop.sh
     ```
