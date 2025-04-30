@@ -223,6 +223,13 @@ To better understand the database structure and relationships, an **UML diagram*
 ## How to run the project
 To run the project, follow these steps:
 
+1. Clone the repository to your local machine:
+    ```bash
+    git clone https://github.com/Adamouze/Loan_Process_Microservices.git
+    ```
+
+2. Replace SendGridAPI credentials (API key and sender address) in the `.env` file located in the root directory of the project. This is necessary for the notification service to send emails.
+
 1. Execute the `run.sh` script located at the root of the project:
     ```bash
     ./run.sh
