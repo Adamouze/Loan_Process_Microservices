@@ -93,8 +93,11 @@ def loan_process_service_first_part(loan_application: Loan_ApplicationCreate, db
             db.commit()
             db.refresh(loan_monitoring_record)
 
-    # Call risk service
-    risk_service_response = evaluate_risk(loan_application_record.account_id, loan_application.loan_amount)
+    elif loan_application_record.loan_amount <= MAX_LOAN_AMOUNT:
+        # Call risk service
+        risk_service_response = evaluate_risk(loan_application_record.account_id, loan_application.loan_amount)
+    else:
+        raise Exception("Invalid loan amount")
 
     if risk_service_response.loan_status == "rejected":
         # Update loan application and monitoring status to rejected
