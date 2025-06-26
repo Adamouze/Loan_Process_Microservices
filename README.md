@@ -6,8 +6,6 @@
 
 The project is designed around a distributed architecture where different components communicate through REST, SOAP, gRPC, and GraphQL APIs. Each service is containerized using Docker and orchestrated using Docker Compose. The backend uses a PostgreSQL database for persistence.
 
----
-
 ## Original Project Subject
 Consider a scenario where a financial services firm offers to its customers a loan request service as following:
 
@@ -20,8 +18,6 @@ Consider a scenario where a financial services firm offers to its customers a lo
 7. In the approval case, the financial services firm requests the loan amount from its own provider and sends it to the customer's bank account.
 8. Finally, the customer is notified about the firm decision (approval or rejection).
 
----
-
 ## Project Goals
 
 This project aims to:
@@ -32,44 +28,40 @@ This project aims to:
 - Use Docker for containerization and Docker Compose for orchestration.
 - Implement clean and scalable service boundaries to respect **single responsibility** principle
 
----
-
 ## Architecture (Microservices & Responsibilities)
 
 Each major functionality from the scenario is assigned to a dedicated service:
 
-### 1. **Customer Service (REST)** ADAM
+### 1. **Customer Service (REST)**
 - Handles customer loan requests (ID, personal info, loan type, amount, description, etc...).
 - Validates the maximum allowed loan amount.
 - Coordinates the loan process by calling other services.
 - **Reason for REST:** Public-facing service with standard HTTP operations and high accessibility.
 
-### 2. **Risk Evaluation Service (gRPC)** ADAM
+### 2. **Risk Evaluation Service (gRPC)**
 - Analyzes the customer’s financial profile and returns a risk level.
 - Simulates interaction with a partner system.
 - **Reason for gRPC:** Fast, efficient, internal communication ideal for service-to-service RPC.
 
-### 3. **Check Validation Service (GraphQL)** LOUIS
+### 3. **Check Validation Service (GraphQL)**
 - Validates the cashier's check submitted by the customer.
 - Simulates interaction with an external banking service.
 - **Reason for GraphQL:** Offers flexible querying for validation results with nested data structures.
 
-### 4. **Loan Provider Service (SOAP)** ADAM
+### 4. **Loan Provider Service (SOAP)**
 - Requests the loan amount from the financial firm’s provider.
 - Simulates fund transfer to the customer’s account.
 - **Reason for SOAP:**  This service simulates a legacy external system (e.g., a traditional bank API) that exposes only a SOAP interface, which is common in older financial infrastructures.
 
-### 5. **Notification Service (REST)** LOUIS
+### 5. **Notification Service (REST)**
 - Notifies the customer (by mail) about loan approval or rejection.
 - Can be internal or expose a small API.
 - Uses SendGridAPI for email notifications.
 - **Reason for REST:** Simple, loosely coupled notification trigger with potential future externalization.
 
-### 6. **PostgreSQL Database** ADAM
+### 6. **PostgreSQL Database**
 - Stores customer profiles, loan requests, and decision history.
 - **Reason:** Reliable relational model to track structured and linked financial data.
-
----
 
 ## Public API Exposure & Security
 
@@ -95,15 +87,15 @@ are designed to be **internal-only** and not publicly exposed.
 
 > This design ensures strict **encapsulation** and promotes the **principle of least privilege**, where only essential APIs are exposed externally.
 
----
-
 ## BPMN Workflow Integration
 
 To orchestrate and visualize the business process across microservices, the project will include a **BPMN workflow layer** using **Camunda Platform 8 (Zeebe)**.
 
+![Loan Process Microservices BPMN](Loan_Process_Microservices_BPMN.png)
+
 Camunda will provide:
 
-- **Visual modeling** of the entire loan process (`.bpmn` files).
+- **Visual modeling** of the entire loan process (`Loan_Process_Microservices_Application.bpmn` files).
 - **Process monitoring UI** via Camunda Operate.
 - **Orchestration via Service Tasks**, calling microservices over REST.
 - **Independent workflow layer** decoupled from business logic.
@@ -122,8 +114,6 @@ Documentation **Camunda Platform 8** `docker compose` : https://docs.camunda.io/
 
 This integration will be done **after core microservices are stable**, so the BPM engine can serve purely as an orchestrator.
 
----
-
 ## Stack & Tools
 
 - **Docker**: Containerization of all services.
@@ -133,8 +123,6 @@ This integration will be done **after core microservices are stable**, so the BP
 - **SOAP (Python)**: For legacy external service simulation.
 - **gRPC (Python)**: For performant internal communication.
 - **GraphQL (Python/Strawberry)**: For structured and flexible queries.
-
----
 
 ## Hypothetical Project Structure
 ```
@@ -202,7 +190,6 @@ Loan_Process_Microservices/
         ├── connector-secrets.txt     # Secrets for connectors
         └── README.md                 # Camunda-specific documentation
 ```
----
 
 ## Workflow (Microservices orchestration)
 
@@ -210,15 +197,15 @@ The following diagram illustrates the end-to-end workflow of the loan applicatio
 
 ![Workflow Loan Application Process](Workflow_Loan_Application_Process.svg)
 
----
+Here is a overview of the workflow from microservices perspective:
+
+![Workflow Microservices](Workflow_Microservices.svg)
 
 ## SQL Schema UML Diagram
 
 To better understand the database structure and relationships, an **UML diagram** will be created for the SQL schema. This diagram will visually represent the tables, their attributes, and the relationships between them (e.g., primary keys, foreign keys).
 
 ![SQL Schema UML Diagram](SQL_Relational_UML.svg)
-
----
 
 ## How to run the project
 To run the project, follow these steps:
@@ -252,8 +239,6 @@ To run the project, follow these steps:
 All microservice ports are defined in the `.env` file, and you can modify them as needed. The Camunda BPMN ports are explained in the official documentation highlighted above.
 
 **Make sure Docker and Docker Compose V2 are installed and running on your system before executing the script.**
-
----
 
 ## API Testing with Postman (Customer Service)
 

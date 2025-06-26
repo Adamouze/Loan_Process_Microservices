@@ -93,6 +93,11 @@ def loan_process_service_first_part(loan_application: Loan_ApplicationCreate, db
             db.commit()
             db.refresh(loan_monitoring_record)
 
+        return Loan_Application_with_MonitoringResponse(
+            Loan_Application=Loan_ApplicationResponse.model_validate(loan_application_record),
+            Loan_Monitoring=LoanMonitoringResponse.model_validate(loan_monitoring_record)
+        )
+
     elif loan_application_record.loan_amount <= MAX_LOAN_AMOUNT:
         # Call risk service
         risk_service_response = evaluate_risk(loan_application_record.account_id, loan_application.loan_amount)
